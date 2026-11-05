@@ -1,0 +1,64 @@
+mat3.h/cpp
+
+3x3 matrix operations, 
+
+3x3 matrix definition
+
+transpose
+multiply
+inverse
+
+
+mat4.h/cpp
+
+4x4 matrix definition
+
+multiplication
+affine inverse
+
+
+translation
+scale
+
+perspective projection + divide
+viewport
+
+
+camera.h/cpp
+
+local matrix
+
+quat.h/cpp
+
+quaternion rotation
+euler to quaternion conversion
+
+scene_graph.h/cpp
+
+update dfs
+pointer to root 
+
+object.h/cpp
+
+object local matrix 4x4
+triangle_list
+
+triangle.h/cpp
+
+vertex array of 3
+
+vertex.h/cpp
+
+point definition
+
+vector.h/cpp
+
+vector definition
+
+rasterizer.h/cpp
+
+calculate color
+DDA
+Bresenham's 
+method : MSSA
+
