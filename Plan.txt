@@ -5,7 +5,8 @@ mat3.h/cpp
 3x3 matrix definition
 
 transpose
-multiply
+multiply(matrix, matrix)
+multiply(matrix, vector)
 inverse
 
 
@@ -13,7 +14,8 @@ mat4.h/cpp
 
 4x4 matrix definition
 
-multiplication
+multiply(matrix, matrix)
+multiply(matrix, vector)
 affine inverse
 
 
@@ -27,6 +29,7 @@ viewport
 camera.h/cpp
 
 local matrix
+clip
 
 quat.h/cpp
 
@@ -42,6 +45,9 @@ object.h/cpp
 
 object local matrix 4x4
 triangle_list
+normal matrix (inverse transpose)
+uv coordinates
+
 
 triangle.h/cpp
 
@@ -50,15 +56,20 @@ vertex array of 3
 vertex.h/cpp
 
 point definition
+color
+normal
 
-vector.h/cpp
 
-vector definition
 
 rasterizer.h/cpp
 
-calculate color
-DDA
-Bresenham's 
+draw_triangle
 method : MSSA
+interpolate attributes
 
+fragment.h / cpp
+fragment definition
+
+shader.h / cpp
+
+run_shader
