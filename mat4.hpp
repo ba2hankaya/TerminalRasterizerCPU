@@ -3,7 +3,7 @@
 #define MAT4OP
 
 #include <cstddef>
-
+#include "mat3.hpp"
 class Vector4
 {
     public:
@@ -45,6 +45,26 @@ public:
         values[13] = n;
         values[14] = o;
         values[15] = p;
+    }
+
+    Matrix4x4(const Matrix3x3& m)
+    {
+        values[0] = m(0,0);
+        values[1] = m(0,1);
+        values[2] = m(0,2);
+        values[3] = 0;
+        values[4] = m(1,0);
+        values[5] = m(1,1);
+        values[6] = m(1,2);
+        values[7] = 0;
+        values[8] = m(2,0);
+        values[9] = m(2,1);
+        values[10] = m(2,2);
+        values[11] = 0;
+        values[12] = 0;
+        values[13] = 0;
+        values[14] = 0;
+        values[15] = 1;
     }
 
     float& operator()(size_t row, size_t col);
