@@ -40,10 +40,10 @@ class Camera : public Object
         );
     }
 
-    void UpdateDirty(Object* obj) override
+    void UpdateDirty(Object* parent = nullptr) override
     {
-        Object::UpdateDirty();
-        viewMatrix = rigidInverse(getLocalMatrix());
+        Object::UpdateDirty(parent);
+        viewMatrix = rigidInverse(getWorldMatrix());
     }
 
     std::vector<Object*> cullFrustumAndReturnRemaining()
