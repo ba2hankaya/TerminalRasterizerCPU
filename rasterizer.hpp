@@ -4,6 +4,7 @@
 #include "mat4.hpp"
 #include "operations.hpp"
 #include <algorithm>
+#include <cstring>
 #include <ncurses.h>
 
 class Rasterizer
@@ -25,7 +26,7 @@ class Rasterizer
 
         this->viewportMatrix = Matrix4x4(
             width / 2.0f, 0, 0, width / 2.0f,
-            0, height / 2.0f, 0, -height / 2.0f,
+            0, -height / 2.0f, 0, height / 2.0f,
             0, 0, 1, 0,
             0, 0, 0, 1
         );
@@ -34,6 +35,8 @@ class Rasterizer
         noecho();
         cbreak();
         curs_set(FALSE);
+
+        memset(vertexBuffer, 0x00, sizeof(vertexBuffer));
     }
 
     void NDCtoScreen()
@@ -47,10 +50,11 @@ class Rasterizer
     void DrawAllTriangles()
     {
         ClearScreen();
-        for (int i = 0; i < 20000; i += 6)
+        for (int i = 0; i  + 5 < 20000; i += 6)
         {
             DrawTriangle(vertexBuffer[i], vertexBuffer[i + 1], vertexBuffer[i + 2], vertexBuffer[i + 3], vertexBuffer[i + 4], vertexBuffer[i + 5]);
         }
+        memset(vertexBuffer, 0x00, sizeof(vertexBuffer));
         refresh();
     }
 
