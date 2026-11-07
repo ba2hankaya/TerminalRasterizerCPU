@@ -37,6 +37,15 @@ public:
         values[8] = i;
     }
 
+    static Matrix3x3 Identity()
+    {
+        return Matrix3x3(
+            1, 0, 0,
+            0, 1, 0,
+            0, 0, 1
+        );
+    }
+
     float& operator()(size_t row, size_t col);
     const float& operator()(size_t row, size_t col) const;
 };

@@ -72,6 +72,11 @@ public:
         values[15] = 1;
     }
 
+    static Matrix4x4 Identity()
+    {
+        return Matrix4x4(Matrix3x3::Identity());
+    }
+
     float& operator()(size_t row, size_t col);
     const float& operator()(size_t row, size_t col) const;
 };
