@@ -236,3 +236,8 @@ Matrix4x4 multiply(const Matrix4x4&m , const Matrix4x4& n)
 
     return r;
 }
+
+float dot(const Vector4& u, const Vector4& v)
+{
+    return u.x * v.x + u.y * v.y + u.z * v.z + u.w * v.w;
+}
