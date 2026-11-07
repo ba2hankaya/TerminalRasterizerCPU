@@ -22,7 +22,7 @@ class Object
 
     public:
 
-    Object()
+    Object() : localMatrix(translation(Vector3())), worldMatrix(localMatrix)
     {
     }
 
@@ -34,9 +34,11 @@ class Object
 
     virtual void UpdateDirty(Object* parent = nullptr)
     {
-        if(_isDirty)
+        const bool needsUpdate = _isDirty || (parent && parent->parentChanged());
+        _parentChanged = needsUpdate;
+        if(needsUpdate)
         {
-            worldMatrix = multiply(parent->getWorldMatrix(), localMatrix);
+            worldMatrix = parent ? multiply(parent->getWorldMatrix(), localMatrix) : localMatrix;
             _isDirty = false;
         }
     }

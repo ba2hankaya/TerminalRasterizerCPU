@@ -30,16 +30,11 @@ public:
     };
     void updateDirty()
     {
-        for(int i = 0; i < objects.size(); ++i)
+        // addObject requires parents to exist, so this order is parent-first.
+        for(size_t i = 0; i < objects.size(); ++i)
         {
-            if(i == 0)
-            {
-                objects[i].UpdateDirty();
-            }
-            else
-            {
-                objects[i].UpdateDirty(&objects[parentIndices()[i]]);
-            }
+            const int parentIndex = _parentIndices[i];
+            objects[i].UpdateDirty(parentIndex == -1 ? nullptr : &objects[parentIndex]);
         }
     };
     std::vector<Object> getAllObjects() const
