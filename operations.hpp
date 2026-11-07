@@ -36,8 +36,6 @@ Matrix4x4 rotation(EulerAngles e);
 
 Matrix4x4 transpose(const Matrix4x4& m);
 
-Vector3 calculateNormal(const Vector4& v1, const Vector4& v2, const Vector4& v3);
-
 void divideByW(Vector4& v);
 
 Vector4 cross(const Vector4& u, const Vector4& v);
