@@ -42,7 +42,10 @@ public:
             }
         }
     };
-    std::vector<Object> getAllObjects() const;
+    std::vector<Object> getAllObjects() const
+    {
+        return objects;
+    };
     std::vector<int> parentIndices() const 
     {
         return _parentIndices;
