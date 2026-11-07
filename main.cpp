@@ -27,8 +27,10 @@ int main()
 
     Rasterizer rasterizer(target_cols,target_lines);
 
+    float ratio_of_terminal_pixel = 0.55;
+
     SceneGraph scene;
-    Camera camera(90, target_cols/float(target_lines), 1, 100);
+    Camera camera(90, target_cols/float(target_lines) * ratio_of_terminal_pixel, 1, 100);
     scene.addObject(&camera, -1);
 
     Object o;
@@ -41,7 +43,7 @@ int main()
     scene.addObject( &box, 1);
 
     while (true) {
-        box.setLocalMatrix(multiply(rotation(EulerAngles(0.01 * current_frame, 0.03 * current_frame , 0.02 * current_frame)),translation(Vector3(0,0,0))));
+        box.setLocalMatrix(multiply(rotation(EulerAngles(0.01 * current_frame, 0.02 * current_frame , 0.03 * current_frame)),translation(Vector3(0,0,0))));
         next_frame += frame_duration;
         frame(scene, camera, rasterizer);
         std::this_thread::sleep_until(next_frame);
