@@ -42,7 +42,7 @@ class Rasterizer
 
     void NDCtoScreen()
     {
-        for (int i = 0; i < 20000; i++)
+        for (int i = 0; i < 20000; i += 2)
         {
             vertexBuffer[i] = multiply(viewportMatrix, vertexBuffer[i]);
         }
