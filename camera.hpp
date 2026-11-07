@@ -51,14 +51,14 @@ class Camera : public Object
         return std::vector<Object*>();
     }
 
-    std::vector<Object*> cullFrustum(const std::vector<Object>& objects)
+    std::vector<Object*> cullFrustum(const std::vector<Object*>& objects)
     {
         std::vector<Object*> remainingObjects;
         for(const auto& obj : objects)
         {
-            if(isObjectInFrustum(obj))
+            if(isObjectInFrustum(*obj))
             {
-                remainingObjects.push_back(const_cast<Object*>(&obj));
+                remainingObjects.push_back(obj);
             }
         }
         return remainingObjects;

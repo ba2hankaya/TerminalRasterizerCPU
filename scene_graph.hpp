@@ -8,25 +8,19 @@
 class SceneGraph
 {
 public:
-    int addObject(const Object* obj, int parentIndex = -1)
+    int addObject(Object* obj, int parentIndex = -1)
     {
-        if(parentIndex >= 0 && parentIndex < objects.size())
+        if(obj == nullptr)
         {
-            objects.push_back(*obj);
-            _parentIndices.push_back(parentIndex);
-            return objects.size() - 1;
+            throw std::invalid_argument("Scene object must not be null.");
         }
-        else if (parentIndex == -1)
-        {
-            objects.push_back(*obj);
-            _parentIndices.push_back(-1);
-            return objects.size() - 1;
-        }
-        else
+        if(parentIndex < -1 || (parentIndex >= 0 && static_cast<size_t>(parentIndex) >= objects.size()))
         {
             throw std::out_of_range("Parent index is out of range.");
         }
-
+        objects.push_back(obj);
+        _parentIndices.push_back(parentIndex);
+        return objects.size() - 1;
     };
     void updateDirty()
     {
@@ -34,10 +28,10 @@ public:
         for(size_t i = 0; i < objects.size(); ++i)
         {
             const int parentIndex = _parentIndices[i];
-            objects[i].UpdateDirty(parentIndex == -1 ? nullptr : &objects[parentIndex]);
+            objects[i]->UpdateDirty(parentIndex == -1 ? nullptr : objects[parentIndex]);
         }
     };
-    std::vector<Object> getAllObjects() const
+    std::vector<Object*> getAllObjects() const
     {
         return objects;
     };
@@ -46,7 +40,7 @@ public:
         return _parentIndices;
     };
 private:
-    std::vector<Object> objects;
+    std::vector<Object*> objects;
     std::vector<int> _parentIndices;
 };
 
