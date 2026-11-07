@@ -20,8 +20,8 @@ int main()
     const microseconds frame_duration(1000000 / fps); 
     auto next_frame = steady_clock::now();
 
-    int target_lines = 50;
-    int target_cols = 100;
+    int target_lines = 71;
+    int target_cols = 281;
 
     long long unsigned int current_frame = 0;
 
@@ -32,7 +32,7 @@ int main()
     scene.addObject(&camera, -1);
 
     Object o;
-    o.setLocalMatrix(translation(Vector3(0, 0, 3)));
+    o.setLocalMatrix(translation(Vector3(0, 0, 1.3)));
 
     Object box; 
     box.createBox(1,1,1);
@@ -41,7 +41,7 @@ int main()
     scene.addObject( &box, 1);
 
     while (true) {
-        box.setLocalMatrix(multiply(rotation(EulerAngles(0.00 * current_frame, 0.00 * current_frame , 0.01 * current_frame)),translation(Vector3(2,0,0))));
+        box.setLocalMatrix(multiply(rotation(EulerAngles(0.01 * current_frame, 0.03 * current_frame , 0.02 * current_frame)),translation(Vector3(0,0,0))));
         next_frame += frame_duration;
         frame(scene, camera, rasterizer);
         std::this_thread::sleep_until(next_frame);
