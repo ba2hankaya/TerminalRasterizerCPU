@@ -60,9 +60,10 @@ class Object
         triangles.push_back(t);
     }
 
+    //AI generated, can't bother calculating triangles to make a box
     // Replace the mesh with a box centered at the local origin.
     void createBox(float width = 1, float height = 1, float depth = 1,
-                   const Vector4& color = Vector4(1, 1, 1, 1))
+                   Vector4 color = Vector4(1, 1, 1, 1))
     {
         validateDimensions(width, height, depth);
         const float x = width / 2, y = height / 2, z = depth / 2;
@@ -82,13 +83,18 @@ class Object
         };
         triangles.clear();
         triangles.reserve(12);
-        for (const auto& face : faces)
+        for (size_t i = 0; i < 12; ++i)
         {
+            const auto& face = faces[i];
+            // Alpha is used as a mock brightness; each pair forms one surface.
+            Vector4 faceColor = color;
+            faceColor.w = color.w * (1.0f - 0.12f * static_cast<float>(i / 2));
             triangles.emplace_back(vertices[face[0]], vertices[face[1]], vertices[face[2]],
-                                   color, color, color);
+                                   faceColor, faceColor, faceColor);
         }
     }
 
+    //also ai generated
     // Replace the mesh with a pyramid centered in its local bounding box.
     // The base lies at y = -height/2; the apex lies at y = height/2.
     void createPyramid(float width = 1, float height = 1, float depth = 1,
