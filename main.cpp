@@ -1,4 +1,7 @@
+#include "mat3.hpp"
 #include "object.hpp"
+#include "operations.hpp"
+#include "quaternion.hpp"
 #include "scene_graph.hpp"
 #include "camera.hpp"
 #include <unistd.h>
@@ -20,6 +23,8 @@ int main()
     int target_lines = 100;
     int target_cols = 100;
 
+    long long unsigned int current_frame = 0;
+
     printf("\e[8;%d;%dt", target_lines, target_cols);
     fflush(stdout);
 
@@ -30,10 +35,18 @@ int main()
     Camera camera(90, 1.0, 1, 100);
     scene.addObject(&camera, -1);
 
+    Object box; 
+    box.createBox(1,1,1);
+    box.setLocalMatrix(multiply(translation(Vector3(0,0,5)), scale(Vector3(1,0.5,0))));
+
+    scene.addObject( &box, -1);
+
     while (true) {
         next_frame += frame_duration;
         frame(scene, camera, rasterizer);
+        box.setLocalMatrix(multiply(translation(Vector3(0,0,5)),(multiply(rotation(EulerAngles(0.1 * current_frame, 0.1 * current_frame, 0.01 * current_frame)), scale(Vector3(1, 0.5, 1))))));
         std::this_thread::sleep_until(next_frame);
+        current_frame++;
     }
 
     endwin();
@@ -72,9 +85,9 @@ void ApplyMVPToTrianglesAndPassToRasterizer(const std::vector<Triangle>& triangl
 void frame(SceneGraph& scene, Camera& camera, Rasterizer& rasterizer)
 {
     scene.updateDirty();
-    std::vector<Object> sceneObjects = scene.getAllObjects();
+    std::vector<Object*> sceneObjects = scene.getAllObjects();
     std::vector<Object*> objects = camera.cullFrustum(sceneObjects);
-    Matrix4x4 viewMatrix = camera.getWorldMatrix();
+    Matrix4x4 viewMatrix = camera.getViewMatrix();
     Matrix4x4 projectionMatrix = camera.getProjectionMatrix();
     for (const auto& obj : objects)
     {
