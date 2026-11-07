@@ -134,6 +134,7 @@ class Object
         return worldMatrix;
     };
 
+    //Ai generated
     private:
     static void validateDimensions(float width, float height, float depth)
     {
