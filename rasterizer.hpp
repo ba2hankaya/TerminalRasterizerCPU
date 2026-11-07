@@ -64,10 +64,10 @@ class Rasterizer
     {
         int minX, minY, maxX, maxY;
         GetBoundingBox(v1, v2, v3, minX, minY, maxX, maxY);
-        MSAA(minX, minY, maxX, maxY, v1, v2, v3);
+        MSAA(minX, minY, maxX, maxY, v1, v2, v3, color1, color2, color3);
     }
 
-    void MSAA(const int& minx, const int& miny, const int& maxx, const int& maxy, const Vector4& v1, const Vector4& v2, const Vector4& v3)
+    void MSAA(const int& minx, const int& miny, const int& maxx, const int& maxy, const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vector4& c1,const Vector4& c2,const Vector4& c3)
     {
 
         for(int x = minx; x <= maxx; x += 1)
@@ -95,7 +95,7 @@ class Rasterizer
 
                     if(screenX >= 0 && screenX < width && screenY >= 0 && screenY < height)
                     {
-                        mvaddch(screenY, screenX, '@');
+                        mvaddch(screenY, screenX, transparencyGradient[int(floor(c3.w * 10))]);
                     }
                 }
             }
