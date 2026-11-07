@@ -20,31 +20,30 @@ int main()
     const microseconds frame_duration(1000000 / fps); 
     auto next_frame = steady_clock::now();
 
-    int target_lines = 100;
+    int target_lines = 50;
     int target_cols = 100;
 
     long long unsigned int current_frame = 0;
 
-    printf("\e[8;%d;%dt", target_lines, target_cols);
-    fflush(stdout);
-
-    usleep(50000);
-    Rasterizer rasterizer(target_lines, target_cols);
+    Rasterizer rasterizer(target_cols,target_lines);
 
     SceneGraph scene;
-    Camera camera(90, 1.0, 1, 100);
+    Camera camera(90, target_cols/float(target_lines), 1, 100);
     scene.addObject(&camera, -1);
+
+    Object o;
+    o.setLocalMatrix(translation(Vector3(0, 0, 3)));
 
     Object box; 
     box.createBox(1,1,1);
-    box.setLocalMatrix(multiply(translation(Vector3(0,0,5)), scale(Vector3(1,0.5,0))));
 
-    scene.addObject( &box, -1);
+    scene.addObject(&o, -1);
+    scene.addObject( &box, 1);
 
     while (true) {
+        box.setLocalMatrix(multiply(rotation(EulerAngles(0.00 * current_frame, 0.00 * current_frame , 0.01 * current_frame)),translation(Vector3(2,0,0))));
         next_frame += frame_duration;
         frame(scene, camera, rasterizer);
-        box.setLocalMatrix(multiply(translation(Vector3(0,0,5)),(multiply(rotation(EulerAngles(0.1 * current_frame, 0.1 * current_frame, 0.01 * current_frame)), scale(Vector3(1, 0.5, 1))))));
         std::this_thread::sleep_until(next_frame);
         current_frame++;
     }
@@ -54,7 +53,7 @@ int main()
 }
 
 void ApplyMVPToTrianglesAndPassToRasterizer(const std::vector<Triangle>& triangles, const Matrix4x4& mvpMatrix, Rasterizer& rasterizer)
-{   
+{
     int t = 0;
     for (const auto& triangle : triangles)
     {
