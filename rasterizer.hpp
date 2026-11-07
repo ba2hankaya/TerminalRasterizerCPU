@@ -4,6 +4,7 @@
 #include "mat4.hpp"
 #include "operations.hpp"
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <ncurses.h>
 
@@ -103,10 +104,10 @@ class Rasterizer
 
     void GetBoundingBox(const Vector4& v1, const Vector4& v2, const Vector4& v3, int& minX, int& minY, int& maxX, int& maxY)
     {
-        minX = std::min({static_cast<int>(v1.x), static_cast<int>(v2.x), static_cast<int>(v3.x)});
-        minY = std::min({static_cast<int>(v1.y), static_cast<int>(v2.y), static_cast<int>(v3.y)});
-        maxX = std::max({static_cast<int>(v1.x), static_cast<int>(v2.x), static_cast<int>(v3.x)});
-        maxY = std::max({static_cast<int>(v1.y), static_cast<int>(v2.y), static_cast<int>(v3.y)});
+        minX = static_cast<int>(std::floor(std::min({v1.x, v2.x, v3.x})));
+        minY = static_cast<int>(std::floor(std::min({v1.y, v2.y, v3.y})));
+        maxX = static_cast<int>(std::ceil(std::max({v1.x, v2.x, v3.x})));
+        maxY = static_cast<int>(std::ceil(std::max({v1.y, v2.y, v3.y})));
     }
 
     void ClearScreen()
