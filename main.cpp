@@ -1,12 +1,20 @@
 #include "object.hpp"
 #include "scene_graph.hpp"
 #include "camera.hpp"
+#include <csignal>
 #include <unistd.h>
 #include "rasterizer.hpp"
+#include "triangle.hpp"
 #include <chrono>
 #include <thread>
 
 void frame(SceneGraph& scene, Camera& camera, Rasterizer& rasterizer);
+
+void handle_sigint(int sig)
+{
+    endwin();
+    exit(0);
+}
 
 int main()
 {
@@ -25,6 +33,8 @@ int main()
     usleep(50000);
     Rasterizer rasterizer(target_lines, target_cols);
 
+    signal(SIGINT, handle_sigint);
+
     SceneGraph scene;
     Camera camera(90, 1.0, 1, 100);
     scene.addObject(&camera, -1);
@@ -35,6 +45,7 @@ int main()
         std::this_thread::sleep_until(next_frame);
     }
 
+    endwin();
     return 0;
 }
 
