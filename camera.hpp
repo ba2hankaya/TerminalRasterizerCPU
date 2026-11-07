@@ -40,7 +40,7 @@ class Camera : public Object
         );
     }
 
-    void UpdateDirty()
+    void UpdateDirty(Object* obj) override
     {
         Object::UpdateDirty();
         viewMatrix = rigidInverse(getLocalMatrix());
