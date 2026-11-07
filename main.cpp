@@ -70,7 +70,8 @@ void ApplyMVPToTrianglesAndPassToRasterizer(const std::vector<Triangle>& triangl
 void frame(SceneGraph& scene, Camera& camera, Rasterizer& rasterizer)
 {
     scene.updateDirty();
-    std::vector<Object*> objects = camera.cullFrustum(scene.getAllObjects());
+    std::vector<Object> sceneObjects = scene.getAllObjects();
+    std::vector<Object*> objects = camera.cullFrustum(sceneObjects);
     Matrix4x4 viewMatrix = camera.getWorldMatrix();
     Matrix4x4 projectionMatrix = camera.getProjectionMatrix();
     for (const auto& obj : objects)
