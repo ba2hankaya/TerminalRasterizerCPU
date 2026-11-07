@@ -39,7 +39,8 @@ int main()
 }
 
 void ApplyMVPToTrianglesAndPassToRasterizer(const std::vector<Triangle>& triangles, const Matrix4x4& mvpMatrix, Rasterizer& rasterizer)
-{
+{   
+    int t = 0;
     for (const auto& triangle : triangles)
     {
         Vector4 v1 = triangle.x();
@@ -54,12 +55,14 @@ void ApplyMVPToTrianglesAndPassToRasterizer(const std::vector<Triangle>& triangl
         divideByW(transformedV2);
         divideByW(transformedV3);
 
-        rasterizer.vertexBuffer[0] = transformedV1;
-        rasterizer.vertexBuffer[1] = triangle.getColor1();
-        rasterizer.vertexBuffer[2] = transformedV2;
-        rasterizer.vertexBuffer[3] = triangle.getColor2();
-        rasterizer.vertexBuffer[4] = transformedV3;
-        rasterizer.vertexBuffer[5] = triangle.getColor3();
+        rasterizer.vertexBuffer[t * 6 + 0] = transformedV1;
+        rasterizer.vertexBuffer[t * 6 + 1] = triangle.getColor1();
+        rasterizer.vertexBuffer[t * 6 + 2] = transformedV2;
+        rasterizer.vertexBuffer[t * 6 + 3] = triangle.getColor2();
+        rasterizer.vertexBuffer[t * 6 + 4] = transformedV3;
+        rasterizer.vertexBuffer[t * 6 + 5] = triangle.getColor3();
+
+        t++;
     }
 }
 
