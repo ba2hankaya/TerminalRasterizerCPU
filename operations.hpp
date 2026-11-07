@@ -44,4 +44,6 @@ Vector4 cross(const Vector4& u, const Vector4& v);
 
 Vector4 normalize(const Vector4& v);
 
+Matrix4x4 multiply(const Matrix4x4&m , const Matrix4x4& n);
+
 #endif
