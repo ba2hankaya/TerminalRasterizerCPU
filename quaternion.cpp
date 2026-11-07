@@ -76,9 +76,9 @@ Quaternion eulerToQuaternion(const EulerAngles& e)
 
     Quaternion q;
     q.w = cr * cp * cy + sr * sp * sy;
-    q.x = sr * cp * cy - cr * sp * sy;
-    q.y = cr * sp * cy + sr * cp * sy;
-    q.z = cr * cp * sy - sr * sp * cy;
+    q.x = cr * cy * sp - sr * sy * cp;
+    q.y = cr * sy * cp + sr * cy * sp;
+    q.z = sr * cy * cp - cr * sy * sp;
 
     return q;
 }
@@ -87,19 +87,19 @@ EulerAngles quaternionToEuler(const Quaternion& q)
 {
     EulerAngles e;
 
-    float sinr_cosp = 2.0f * (q.w * q.x + q.y * q.z);
-    float cosr_cosp = 1.0f - 2.0f * (q.x * q.x + q.y * q.y);
-    e.roll = atan2(sinr_cosp, cosr_cosp);
-
-    float sinp = 2.0f * (q.w * q.y - q.z * q.x);
-    if (fabs(sinp) >= 1)
-        e.pitch = copysign(M_PI / 2, sinp); 
+    float sinYaw = 2.0f * (q.w * q.y - q.z * q.x);
+    if (fabs(sinYaw) >= 1)
+    {
+        e.yaw = copysign(M_PI / 2, sinYaw);
+        e.pitch = 2.0f * atan2(q.x, q.w);
+        e.roll = 0;
+    }
     else
-        e.pitch = asin(sinp);
-
-    float siny_cosp = 2.0f * (q.w * q.z + q.x * q.y);
-    float cosy_cosp = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
-    e.yaw = atan2(siny_cosp, cosy_cosp);
+    {
+        e.pitch = atan2(2.0f * (q.w * q.x + q.y * q.z), 1.0f - 2.0f * (q.x * q.x + q.y * q.y));
+        e.yaw = asin(sinYaw);
+        e.roll = atan2(2.0f * (q.w * q.z + q.x * q.y), 1.0f - 2.0f * (q.y * q.y + q.z * q.z));
+    }
 
     return e;
 }
