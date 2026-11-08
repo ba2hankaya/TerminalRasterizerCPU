@@ -5,8 +5,12 @@
 #include "operations.hpp"
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
+#include <limits>
 #include <ncurses.h>
+#include <limits.h>
 
 class Rasterizer
 {
@@ -20,6 +24,7 @@ class Rasterizer
 
     public:
     Vector4 vertexBuffer[20000]; // Assuming a maximum of 20000 vertices
+    float* depthBuffer;
     Rasterizer(int width, int height)
     {
         this->width = width;
@@ -32,30 +37,39 @@ class Rasterizer
             0, 0, 0, 1
         );
 
+        depthBuffer = new float[width * height];
+
         initscr();
         noecho();
         cbreak();
         curs_set(FALSE);
 
-        memset(vertexBuffer, 0x00, sizeof(vertexBuffer));
+        ClearVertexBuffer();
+        ClearDepthBuffer();
     }
 
-    void NDCtoScreen()
+    ~Rasterizer()
     {
-        for (int i = 0; i < 20000; i += 2)
+        delete [] depthBuffer;
+    }
+
+    void NDCtoScreen(int sizeBuffer)
+    {
+        for (int i = 0; i < sizeBuffer; i += 2)
         {
             vertexBuffer[i] = multiply(viewportMatrix, vertexBuffer[i]);
         }
     }
 
-    void DrawAllTriangles()
+    void DrawAllTriangles(int sizeBuffer)
     {
         ClearScreen();
-        for (int i = 0; i  + 5 < 20000; i += 6)
+        for (int i = 0; i  + 5 < sizeBuffer; i += 6)
         {
             DrawTriangle(vertexBuffer[i], vertexBuffer[i + 1], vertexBuffer[i + 2], vertexBuffer[i + 3], vertexBuffer[i + 4], vertexBuffer[i + 5]);
         }
-        memset(vertexBuffer, 0x00, sizeof(vertexBuffer));
+        ClearVertexBuffer();
+        ClearDepthBuffer();
         refresh();
     }
 
@@ -77,29 +91,46 @@ class Rasterizer
                 float centerX = x + 0.5f;
                 float centerY = y + 0.5f;
 
-                float edge1 = (v2.x - v1.x) * (centerY - v1.y) - (v2.y - v1.y) * (centerX - v1.x);
-                float edge2 = (v3.x - v2.x) * (centerY - v2.y) - (v3.y - v2.y) * (centerX - v2.x);
-                float edge3 = (v1.x - v3.x) * (centerY - v3.y) - (v1.y - v3.y) * (centerX - v3.x);
+                float edge12 = (v2.x - v1.x) * (centerY - v1.y) - (v2.y - v1.y) * (centerX - v1.x);
+                float edge23 = (v3.x - v2.x) * (centerY - v2.y) - (v3.y - v2.y) * (centerX - v2.x);
+                float edge13 = (v1.x - v3.x) * (centerY - v3.y) - (v1.y - v3.y) * (centerX - v3.x);
 
-                if(edge1 <= 0 && edge2 <= 0 && edge3 <= 0)
+                if(edge12 <= 0 && edge23 <= 0 && edge13 <= 0)
                 {
-                    edge1 = -edge1;
-                    edge2 = -edge2;
-                    edge3 = -edge3;
+                    edge12 = -edge12;
+                    edge23 = -edge23;
+                    edge13 = -edge13;
                 }
 
-                if(edge1 >= 0 && edge2 >= 0 && edge3 >= 0)
+                if(edge12 >= 0 && edge23 >= 0 && edge13 >= 0)
                 {
                     int screenX = static_cast<int>(x);
                     int screenY = static_cast<int>(y);
 
                     if(screenX >= 0 && screenX < width && screenY >= 0 && screenY < height)
                     {
-                        mvaddch(screenY, screenX, transparencyGradient[int(floor(c3.w * 10))]);
+                        float depth = InterpolateDepth(v1, v2, v3, edge12, edge23, edge13);
+                        fprintf(stderr, "%d %d \n", x, y);
+                        if(depthBuffer[y * width + x] > depth)
+                        {
+                            mvaddch(screenY, screenX, transparencyGradient[int(floor(c3.w * 10))]);
+                            depthBuffer[y * width + x] = depth;
+                        }
                     }
                 }
             }
         }
+    }
+
+    float InterpolateDepth(const Vector4& v1, const Vector4& v2, const Vector4& v3, const float& e12, const float& e23, const float& e13)
+    {
+        float sum = e12 + e23 + e13;
+        float alpha1 = e23 / sum;
+        float alpha2 = e13 / sum;
+        float alpha3 = e12 / sum;
+
+        float interpolatedDepth = alpha1 * v1.z + alpha2 * v2.z + alpha3 * v3.z;
+        return  interpolatedDepth;
     }
 
     void GetBoundingBox(const Vector4& v1, const Vector4& v2, const Vector4& v3, int& minX, int& minY, int& maxX, int& maxY)
@@ -113,6 +144,16 @@ class Rasterizer
     void ClearScreen()
     {
         clear();
+    }
+
+    void ClearDepthBuffer()
+    {
+        std::fill_n(depthBuffer, width * height, std::numeric_limits<float>::max());
+    }
+
+    void ClearVertexBuffer()
+    {
+        memset(vertexBuffer, 0x00, sizeof(vertexBuffer));
     }
 };
 

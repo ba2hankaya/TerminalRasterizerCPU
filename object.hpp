@@ -88,7 +88,7 @@ class Object
             const auto& face = faces[i];
             // Alpha is used as a mock brightness; each pair forms one surface.
             Vector4 faceColor = color;
-            faceColor.w = color.w * (1.0f - 0.12f * static_cast<float>(i / 2));
+            faceColor.w = color.w * (0.99f - 0.12f * static_cast<float>(i / 2));
             triangles.emplace_back(vertices[face[0]], vertices[face[1]], vertices[face[2]],
                                    faceColor, faceColor, faceColor);
         }

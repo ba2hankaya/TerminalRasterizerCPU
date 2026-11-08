@@ -54,7 +54,7 @@ int main()
     return 0;
 }
 
-void ApplyMVPToTrianglesAndPassToRasterizer(const std::vector<Triangle>& triangles, const Matrix4x4& mvpMatrix, Rasterizer& rasterizer)
+int ApplyMVPToTrianglesAndPassToRasterizer(const std::vector<Triangle>& triangles, const Matrix4x4& mvpMatrix, Rasterizer& rasterizer)
 {
     int t = 0;
     for (const auto& triangle : triangles)
@@ -80,6 +80,7 @@ void ApplyMVPToTrianglesAndPassToRasterizer(const std::vector<Triangle>& triangl
 
         t++;
     }
+    return t * 6;
 }
 
 
@@ -90,12 +91,13 @@ void frame(SceneGraph& scene, Camera& camera, Rasterizer& rasterizer)
     std::vector<Object*> objects = camera.cullFrustum(sceneObjects);
     Matrix4x4 viewMatrix = camera.getViewMatrix();
     Matrix4x4 projectionMatrix = camera.getProjectionMatrix();
+    int sizeBuf = 0;
     for (const auto& obj : objects)
     {
         Matrix4x4 modelMatrix = obj->getWorldMatrix();
         Matrix4x4 mvpMatrix = multiply(projectionMatrix, multiply(viewMatrix, modelMatrix));
-        ApplyMVPToTrianglesAndPassToRasterizer(obj->getTriangles(), mvpMatrix, rasterizer);
+        sizeBuf += ApplyMVPToTrianglesAndPassToRasterizer(obj->getTriangles(), mvpMatrix, rasterizer);
     }
-    rasterizer.NDCtoScreen();
-    rasterizer.DrawAllTriangles();
+    rasterizer.NDCtoScreen(sizeBuf);
+    rasterizer.DrawAllTriangles(sizeBuf);
 }
