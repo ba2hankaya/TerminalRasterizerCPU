@@ -23,6 +23,10 @@ class Vector4
     {
         return Vector4(x - other.x, y - other.y, z - other.z, w - other.w);
     }
+    Vector4 operator+(const Vector4& other) const
+    {
+        return Vector4(x + other.x, y + other.y, z + other.z, w + other.w);
+    }
 };
 
 class Matrix4x4 
