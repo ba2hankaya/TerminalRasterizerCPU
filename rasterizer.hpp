@@ -5,8 +5,6 @@
 #include "operations.hpp"
 #include <algorithm>
 #include <cmath>
-#include <cstdio>
-#include <cstdlib>
 #include <cstring>
 #include <limits>
 #include <ncurses.h>
@@ -110,7 +108,6 @@ class Rasterizer
                     if(screenX >= 0 && screenX < width && screenY >= 0 && screenY < height)
                     {
                         float depth = InterpolateDepth(v1, v2, v3, edge12, edge23, edge13);
-                        fprintf(stderr, "%d %d \n", x, y);
                         if(depthBuffer[y * width + x] > depth)
                         {
                             mvaddch(screenY, screenX, transparencyGradient[int(floor(c3.w * 10))]);
