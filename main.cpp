@@ -43,7 +43,7 @@ int main()
     scene.addObject( &box, 1);
 
     while (true) {
-        box.setLocalMatrix(multiply(rotation(EulerAngles(0.01 * current_frame, 0.02 * current_frame , 0.03 * current_frame)),translation(Vector3(0,0,0))));
+        box.setLocalMatrix(multiply(rotation(EulerAngles( 3.14/2 * sin(current_frame/240.0), 3.14/4 * sin(current_frame/120.0) , 3.14/4 * sin(current_frame/120.0))),translation(Vector3(0,0,0))));
         next_frame += frame_duration;
         frame(scene, camera, rasterizer);
         std::this_thread::sleep_until(next_frame);
@@ -54,9 +54,12 @@ int main()
     return 0;
 }
 
-int ApplyMVPToTrianglesAndPassToRasterizer(const std::vector<Triangle>& triangles, const Matrix4x4& mvpMatrix, Rasterizer& rasterizer)
+void ApplyMVPToTrianglesAndPassToRasterizer(const std::vector<Triangle>& triangles, const Matrix4x4& mvpMatrix, Rasterizer& rasterizer, int& sizeBuf)
 {
-    int t = 0;
+    if(sizeBuf + 6 > 20000)
+    {
+        return;
+    }
     for (const auto& triangle : triangles)
     {
         Vector4 v1 = triangle.x();
@@ -71,16 +74,14 @@ int ApplyMVPToTrianglesAndPassToRasterizer(const std::vector<Triangle>& triangle
         divideByW(transformedV2);
         divideByW(transformedV3);
 
-        rasterizer.vertexBuffer[t * 6 + 0] = transformedV1;
-        rasterizer.vertexBuffer[t * 6 + 1] = triangle.getColor1();
-        rasterizer.vertexBuffer[t * 6 + 2] = transformedV2;
-        rasterizer.vertexBuffer[t * 6 + 3] = triangle.getColor2();
-        rasterizer.vertexBuffer[t * 6 + 4] = transformedV3;
-        rasterizer.vertexBuffer[t * 6 + 5] = triangle.getColor3();
-
-        t++;
+        rasterizer.vertexBuffer[sizeBuf + 0] = transformedV1;
+        rasterizer.vertexBuffer[sizeBuf + 1] = triangle.getColor1();
+        rasterizer.vertexBuffer[sizeBuf + 2] = transformedV2;
+        rasterizer.vertexBuffer[sizeBuf + 3] = triangle.getColor2();
+        rasterizer.vertexBuffer[sizeBuf + 4] = transformedV3;
+        rasterizer.vertexBuffer[sizeBuf + 5] = triangle.getColor3();
+        sizeBuf += 6;
     }
-    return t * 6;
 }
 
 
@@ -96,7 +97,7 @@ void frame(SceneGraph& scene, Camera& camera, Rasterizer& rasterizer)
     {
         Matrix4x4 modelMatrix = obj->getWorldMatrix();
         Matrix4x4 mvpMatrix = multiply(projectionMatrix, multiply(viewMatrix, modelMatrix));
-        sizeBuf += ApplyMVPToTrianglesAndPassToRasterizer(obj->getTriangles(), mvpMatrix, rasterizer);
+        ApplyMVPToTrianglesAndPassToRasterizer(obj->getTriangles(), mvpMatrix, rasterizer, sizeBuf);
     }
     rasterizer.NDCtoScreen(sizeBuf);
     rasterizer.DrawAllTriangles(sizeBuf);
