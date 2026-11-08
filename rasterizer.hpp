@@ -107,7 +107,7 @@ class Rasterizer
 
                     if(screenX >= 0 && screenX < width && screenY >= 0 && screenY < height)
                     {
-                        float depth = InterpolateDepth(v1, v2, v3, edge12, edge23, edge13);
+                        float depth = InterpolateAttribute(v1, v2, v3, edge12, edge23, edge13);
                         if(depthBuffer[y * width + x] > depth)
                         {
                             mvaddch(screenY, screenX, transparencyGradient[int(floor(c3.w * 10))]);
@@ -119,14 +119,15 @@ class Rasterizer
         }
     }
 
-    float InterpolateDepth(const Vector4& v1, const Vector4& v2, const Vector4& v3, const float& e12, const float& e23, const float& e13)
+    template<typename T>
+    float InterpolateAttribute(T a1, T a2, T a3, const float& e12, const float& e23, const float& e13)
     {
         float sum = e12 + e23 + e13;
         float alpha1 = e23 / sum;
         float alpha2 = e13 / sum;
         float alpha3 = e12 / sum;
 
-        float interpolatedDepth = alpha1 * v1.z + alpha2 * v2.z + alpha3 * v3.z;
+        float interpolatedDepth = alpha1 * a1.z + alpha2 * a2.z + alpha3 * a3.z;
         return  interpolatedDepth;
     }
 
